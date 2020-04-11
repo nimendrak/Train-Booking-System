@@ -48,7 +48,7 @@ public class PassengerQueue {
 
     private void add(Passenger[] waitingRoom) {
         Random random = new Random();
-        int randomPassengers = random.nextInt((6));
+        int randomPassengers = random.nextInt((6 - 1) + 1) + 1;
         totalRandomTurns = totalRandomTurns + randomPassengers;
 
         i = +i;
@@ -60,11 +60,11 @@ public class PassengerQueue {
         for (Passenger p : waitingRoom) {
             if (p != null && i < totalRandomTurns) {
                 queueArray[i] = p;
-                    for (int j = 0; j < 41; j++) {
-                        if (waitingRoom[j] == p) {
-                            waitingRoom[j] = null;
-                        }
+                for (int j = 0; j < 42; j++) {
+                    if (waitingRoom[j] == p) {
+                        waitingRoom[j] = null;
                     }
+                }
                 i++;
             }
         }
@@ -73,51 +73,63 @@ public class PassengerQueue {
 
     private void remove() {
         Scanner sc = new Scanner(System.in);
-        String nic;
+        String nic = "";
         String checkRemoveName;
         int removedSeatNumber;
 
         List<String> checkRemoveNicList = new ArrayList<>();
-        List<Integer> checkRemoveSeat = new ArrayList<>();
         for (Passenger p : queueArray) {
             if (p != null) {
                 checkRemoveNicList.add(p.getNic());
-                checkRemoveSeat.add(p.getSeat());
             }
         }
 
-        System.out.print("Prompt your First Name : ");
-        checkRemoveName = sc.next();
+        System.out.println(checkRemoveNicList);
 
-        System.out.print("Prompt your NIC : ");
-        nic = sc.next();
+        try {
+            if (!checkRemoveNicList.isEmpty()) {
+                System.out.print("Prompt your First Name : ");
+                checkRemoveName = sc.next();
 
-        if (checkRemoveNicList.contains(nic)) {
-            try {
-                System.out.println("\033[4;37m" + "\nYou have booked following seats" + "\033[0m");
-                for (Passenger p : queueArray) {
-                    if (p.getNic().equals(nic) & p.getFirstName().equals(checkRemoveName)) {
+                System.out.print("Prompt your NIC : ");
+                nic = sc.next();
+
+                if (!checkRemoveNicList.contains(nic)) {
+                    System.out.println("No seats booked under " + nic);
+                } else {
+                    System.out.println("\033[4;37m" + "\nYou have booked following seats" + "\033[0m");
+                    for (Passenger p : queueArray) {
                         System.out.print("\033[1;31m" + "#" + p.getSeat() + "\033[0m" + " ");
                     }
+                }
+            } else {
+                System.out.println("Train Queue is Empty!");
+            }
 
-                    System.out.print("\nWhich seat do you want to delete (Prompt a Seat Number) : ");
-                    //loop till user enters a integer for seat number
-                    while (!sc.hasNextInt()) {
-                        System.out.println("Prompt Integers to proceed!!\n");
-                        System.out.print("Which seat do you want to delete (Prompt a Seat Number) : ");
-                        sc.next();
-                    }
-                    removedSeatNumber = sc.nextInt();
+        } catch (NullPointerException e) {
+            //
+        }
 
-                    if (checkRemoveSeat.contains(removedSeatNumber)) {
-                        queueArray[removedSeatNumber] = null;
+        try {
+            if (!checkRemoveNicList.isEmpty()) {
+                System.out.print("\nWhich seat do you want to delete (Prompt a Seat Number) : ");
+                //loop till user enters a integer for seat number
+                while (!sc.hasNextInt()) {
+                    System.out.println("Prompt Integers to proceed!!\n");
+                    System.out.print("Which seat do you want to delete (Prompt a Seat Number) : ");
+                    sc.next();
+                }
+                removedSeatNumber = sc.nextInt();
+
+                for (int i = 0; i < 21; i++) {
+                    if (removedSeatNumber == i) {
+                        queueArray[i - 1] = null;
+                        break;
                     }
                 }
-            } catch (NullPointerException | IndexOutOfBoundsException e) {
-                //
             }
-        } else {
-            System.out.println("No seats booked under " + nic);
+        } catch (NullPointerException e) {
+            //
         }
     }
 }
