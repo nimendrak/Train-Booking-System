@@ -1,7 +1,9 @@
 import java.util.*;
+import java.util.stream.Stream;
 
 public class PassengerQueue {
-    private Passenger[] queueArray = new Passenger[42];
+    private Passenger[] queueArrayOne = new Passenger[21];
+    private Passenger[] queueArrayTwo = new Passenger[21];
     private int firstPassenger;
     private int lastPassenger;
     private int maxLength;
@@ -9,9 +11,16 @@ public class PassengerQueue {
 
     int i = 0;
     int totalRandomTurns = 0;
+    int queueCounter = 0;
+    int queueOneLen = 0;
+    int queueTwoLen = 0;
 
-    public Passenger[] getQueueArray() {
-        return queueArray;
+    public Passenger[] getQueueArrayOne() {
+        return queueArrayOne;
+    }
+
+    public Passenger[] getQueueArrayTwo() {
+        return queueArrayTwo;
     }
 
     public int getFirstPassenger() {
@@ -46,29 +55,68 @@ public class PassengerQueue {
         this.maxStayInQueue = maxStayInQueue;
     }
 
-    private void add(Passenger[] waitingRoom) {
+    public void add(int station, Passenger[] waitingRoom, String[][][][] passengersArray) {
+        for (Passenger p : queueArrayOne) {
+            if (p != null) {
+                queueOneLen++;
+            }
+        }
+
+        for (Passenger p : queueArrayTwo) {
+            if (p != null) {
+                queueTwoLen++;
+            }
+        }
+
         Random random = new Random();
-        int randomPassengers = random.nextInt((6 - 1) + 1) + 1;
+        int randomPassengers = random.nextInt((6 - 2) + 2) + 2;
         totalRandomTurns = totalRandomTurns + randomPassengers;
 
         i = +i;
+        System.out.println("queueOneLen - " + queueOneLen);
+        System.out.println("queueTwoLen - " + queueTwoLen);
 
         System.out.println("\ni - " + i);
         System.out.println("random - " + randomPassengers);
         System.out.println("total - " + totalRandomTurns);
 
-        for (Passenger p : waitingRoom) {
-            if (p != null && i < totalRandomTurns) {
-                queueArray[i] = p;
-                for (int j = 0; j < 42; j++) {
-                    if (waitingRoom[j] == p) {
-                        waitingRoom[j] = null;
+        System.out.println("\nwaitingRoom - \n" + Arrays.toString(waitingRoom));
+
+        try {
+            for (Passenger p : waitingRoom) {
+                if (p != null && i < totalRandomTurns) {
+                    if (queueOneLen < queueTwoLen) {
+                        queueArrayOne[i] = p;
+                    } else if (queueOneLen > queueTwoLen) {
+                        queueArrayTwo[i] = p;
+                    } else {
+                        queueArrayOne[i] = p;
+                    }
+                    for (int j = 0; j < 42; j++) {
+                        if (waitingRoom[j] == p) {
+                            waitingRoom[j] = null;
+                        }
+                    }
+                    i++;
+                }
+            }
+
+            Passenger temp;
+            for (int i = 0; i < queueOneLen; i++) {
+                for (int j = i + 1; j < queueOneLen; j++) {
+                    if (queueArrayOne[i].getSeat() > queueArrayOne[j].getSeat()) {
+                        temp = queueArrayOne[i];
+                        queueArrayOne[i] = queueArrayOne[j];
+                        queueArrayOne[j] = temp;
                     }
                 }
-                i++;
             }
+        } catch (Exception e) {
+            //
         }
-        System.out.println("i++ - " + i);
+
+        System.out.println("\nsorted array 1 - \n" + Arrays.toString(queueArrayOne));
+        System.out.println("\nsorted array 2 - \n" + Arrays.toString(queueArrayTwo));
     }
 
     private void remove() {
@@ -78,7 +126,7 @@ public class PassengerQueue {
         int removedSeatNumber;
 
         List<String> checkRemoveNicList = new ArrayList<>();
-        for (Passenger p : queueArray) {
+        for (Passenger p : queueArrayOne) {
             if (p != null) {
                 checkRemoveNicList.add(p.getNic());
             }
@@ -98,7 +146,7 @@ public class PassengerQueue {
                     System.out.println("No seats booked under " + nic);
                 } else {
                     System.out.println("\033[4;37m" + "\nYou have booked following seats" + "\033[0m");
-                    for (Passenger p : queueArray) {
+                    for (Passenger p : queueArrayOne) {
                         System.out.print("\033[1;31m" + "#" + p.getSeat() + "\033[0m" + " ");
                     }
                 }
@@ -123,7 +171,7 @@ public class PassengerQueue {
 
                 for (int i = 0; i < 21; i++) {
                     if (removedSeatNumber == i) {
-                        queueArray[i - 1] = null;
+                        queueArrayOne[i - 1] = null;
                         break;
                     }
                 }
