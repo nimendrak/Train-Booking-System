@@ -1,0 +1,61 @@
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #2
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #3
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #4
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #5
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #6
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #7
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #8
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #9
+
+Queue 01
+Maximum length queue          : 4
+Maximum waiting time          : 51
+Minimum waiting time          : 13
+Average Waiting time          : 25.75
+
+Queue 02
+Maximum length queue          : 5
+Maximum waiting time          : 103
+Minimum waiting time          : 14
+Average Waiting time          : 20.60
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #2
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #3
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #4
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #5
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #6
+
+Queue 01
+Maximum Queue Length          : 6
+Maximum Waiting Time          : 72
+Minimum Waiting Time          : 15
+Average Waiting Time          : 12.00
+
+Queue 02
+Maximum Queue Length          : 4
+Maximum Waiting Time          : 41
+Minimum Waiting Time          : 9
+Average Waiting Time          : 18.00
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #2
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #3
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #4
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #5
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #6
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #7
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #8
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #9
+Destination - Badulla to Colombo | Booked date - 2020-04-14 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #10
+
+Queue 01
+Maximum Queue Length          : 5
+Maximum Waiting Time          : 56
+Minimum Waiting Time          : 14
+Average Waiting Time          : 23.00
+
+Queue 02
+Maximum Queue Length          : 5
+Maximum Waiting Time          : 115
+Minimum Waiting Time          : 6
+Average Waiting Time          : 23.00
