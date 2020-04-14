@@ -10,6 +10,33 @@ public class PassengerQueue {
     int i = 0;
     int totalRandomTurns = 0;
     int queueLen = 0;
+    int lenCounter = 0;
+
+    public boolean isEmpty() {
+        for (Passenger p : queueArray) {
+            if (p != null) {
+                lenCounter++;
+            }
+        }
+        boolean isEmpty = false;
+        if (lenCounter == 0) {
+            isEmpty = true;
+        }
+        return isEmpty;
+    }
+
+    public boolean isFull() {
+        for (Passenger p : queueArray) {
+            if (p != null) {
+                lenCounter++;
+            }
+        }
+        boolean isEmpty = false;
+        if (lenCounter == 21) {
+            isEmpty = true;
+        }
+        return isEmpty;
+    }
 
     public Passenger[] getQueueArray() {
         return queueArray;
@@ -142,13 +169,11 @@ public class PassengerQueue {
             } else {
                 System.out.println("Train Queue is Empty!");
             }
-
-        } catch (NullPointerException e) {
-            //
+        } catch (Exception ignored) {
         }
 
         try {
-            if (!checkRemoveNicList.isEmpty()) {
+            if (checkRemoveNicList.contains(nic)) {
                 System.out.print("\n\nWhich seat do you want to delete (Prompt a Seat Number) : ");
                 //loop till user enters a integer for seat number
                 while (!sc.hasNextInt()) {
@@ -158,15 +183,52 @@ public class PassengerQueue {
                 }
                 removedSeatNumber = sc.nextInt();
 
-                for (int i = 0; i < 21; i++) {
-                    if (removedSeatNumber == i) {
-                        queueArray[i] = null;
-                        break;
+                int index = 0;
+                for (Passenger p : queueArray) {
+                    if (p != null) {
+                        for (int i = 0; i < 21; i++) {
+                            if (removedSeatNumber == p.getSeat()) {
+                                System.out.println("passenger" + p);
+                                System.out.println("index - " + findIndex(queueArray, p));
+                                index = findIndex(queueArray, p);
+                                break;
+                            }
+                        }
                     }
                 }
+
+                for (int i = index; i <= queueArray.length; i++) {
+                    queueArray[i] = queueArray[i + 1];
+                }
+
             }
-        } catch (NullPointerException e) {
-            //
+        } catch (Exception ignored) {
         }
     }
+
+    // Linear-search function to find the index of an element
+    public static int findIndex(Passenger[] arr, Passenger t) {
+
+        // if array is Null
+        if (arr == null) {
+            return -1;
+        }
+
+        // find length of array
+        int len = arr.length;
+        int i = 0;
+
+        // traverse in the array
+        while (i < len) {
+            // if the i-th element is t
+            // then return the index
+            if (arr[i] == t) {
+                return i;
+            } else {
+                i = i + 1;
+            }
+        }
+        return -1;
+    }
+
 }

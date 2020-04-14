@@ -9,10 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -20,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -127,12 +125,12 @@ public class TrainStation extends Application {
 
                 case "S":
                 case "s":
-                    //storeData();
+                    storeData(station, passengerQueueOne, passengerQueueTwo);
                     break;
 
                 case "L":
                 case "l":
-                    //loadData();
+                    loadData(station, passengerQueueOne, passengerQueueTwo);
                     break;
 
                 case "R":
@@ -145,7 +143,7 @@ public class TrainStation extends Application {
                     System.out.print("\nIf you want to store data before, you exit from the program\nPrompt \"S\" or prompt any key to Exit : ");
                     String option = sc.next();
                     if (option.equalsIgnoreCase("s")) {
-                        //storeData(passengersArray, bookedDatesList);
+                        storeData(station, passengerQueueOne, passengerQueueTwo);
                     } else {
                         System.out.println("\nProgram is now Exiting..");
                     }
@@ -307,9 +305,16 @@ public class TrainStation extends Application {
         int localDateInt = parseInt(String.valueOf(localDate).substring(8, 10)) - 1;
 
         List<Integer> bookedSeats = new ArrayList<>();
+        List<Integer> boardedPassengersSeats = new ArrayList<>();
         int queueOneCounter = 0;
         int queueTwoCounter = 0;
         int boardedCounter = 0;
+
+        for (Passenger p : boardedPassengers) {
+            if (p != null) {
+                boardedPassengersSeats.add(p.getSeat());
+            }
+        }
 
         //booked passengers
         try {
@@ -422,7 +427,7 @@ public class TrainStation extends Application {
         }
 
         seat.setOnAction(event -> {
-            if (bookedSeats.contains(i)) {
+            if (bookedSeats.contains(i) | boardedPassengersSeats.contains(i)) {
                 if (seat.isSelected()) {
                     Stage passengerDetails = new Stage();
                     passengerDetails.initModality(Modality.APPLICATION_MODAL);
@@ -540,6 +545,22 @@ public class TrainStation extends Application {
                         //passengerQueue is empty at the first run
                     }
 
+                    if (actionType.equals("trainSeatsDisplay")) {
+                        //boarded passengers
+                        try {
+                            for (Passenger p : boardedPassengers) {
+                                if (p.getSeat() == i) {
+                                    status = new Label("Status => Boarded to the Train");
+                                    status.setTextFill(Paint.valueOf("#E3236D"));
+                                    seatText.setTextFill(Paint.valueOf("#E3236D"));
+                                    seatLabel.setTextFill(Paint.valueOf("#E3236D"));
+                                }
+                            }
+                        } catch (Exception e) {
+                            //passengerQueue is empty at the first run
+                        }
+                    }
+
                     status.setFont(new Font("Arial Bold", 16));
                     seatLabel.setPadding(new Insets(-40, 0, 0, 0));
                     seatLabel.setFont(new Font("Arial Bold", 165));
@@ -593,7 +614,7 @@ public class TrainStation extends Application {
                     waitingRoom[index[0]].setSeat(seat);
                     waitingRoom[index[0]].setSecondsInQueue(secondsInQueue());
 
-                    toggleButtonOne.setOnAction(event1 -> waitingRoom[index[0]] = null);
+                    toggleButtonOne.setOnMouseClicked(event1 -> waitingRoom[index[0]] = null);
 
                     index[0]++;
                 }
@@ -605,8 +626,7 @@ public class TrainStation extends Application {
 
     private void trainSeatsDisplay(int station, String[][][][] passengersArray, PassengerQueue
             passengerQueueOne, PassengerQueue passengerQueueTwo, Passenger[] waitingRoom, Passenger[] boardedPassengers, VBox
-                                           rowOne, VBox
-                                           rowTwo, VBox rowThree, VBox rowFour, VBox rowFive, VBox rowSix, HBox panelTwo, String actionType) {
+                                           rowOne, VBox rowTwo, VBox rowThree, VBox rowFour, VBox rowFive, VBox rowSix, HBox panelTwo, String actionType) throws Exception {
 
         class trainSeatsDisplay {
             ToggleButton seat;
@@ -651,6 +671,7 @@ public class TrainStation extends Application {
 
                     if (actionType.equals("trainSeatsDisplay")) {
                         row.getChildren().addAll(seat);
+                        bookingDetailsDisplay(station, passengersArray, passengerQueueOne, passengerQueueTwo, boardedPassengers, i, seat, toggleButtonOne, toggleButtonTwo, "trainSeatsDisplay", row);
                         seat.setStyle("-fx-background-color: #00A69C; -fx-background-radius: 8; -fx-border-color: #00A69C; -fx-border-radius: 8; -fx-border-width: 2;");
                         //boarded passengers
                         try {
@@ -756,7 +777,7 @@ public class TrainStation extends Application {
     }
 
     private void addPassengersToWaitingRoom(int station, String[][][][] passengersArray, Passenger[]
-            waitingRoom, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo, Passenger[] boardedPassengers) {
+            waitingRoom, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo, Passenger[] boardedPassengers) throws Exception {
         System.out.println("--------------------------------------------------");
 
         System.out.println("\n**********************************");
@@ -782,12 +803,12 @@ public class TrainStation extends Application {
         flowPane.setVgap(10);
         flowPane.setPadding(new Insets(30));
 
-        Scene scene = new Scene(flowPane, 650, 750);
+        Scene scene = new Scene(flowPane, 635, 875);
 
         Label header = new Label("Add passengers to the Waiting Room");
         header.setFont(new Font("Arial Bold", 22));
         header.setTextFill(Paint.valueOf("#414141"));
-        header.setPadding(new Insets(0, 200, 30, 100));
+        header.setPadding(new Insets(0, 200, 30, 90));
 
         VBox rowOne = new VBox();
         VBox rowTwo = new VBox();
@@ -797,23 +818,29 @@ public class TrainStation extends Application {
         VBox rowSix = new VBox();
 
         HBox waitingRoomLowerPanel = new HBox();
-
         trainSeatsDisplay(station, passengersArray, passengerQueueOne, passengerQueueTwo, waitingRoom, boardedPassengers, rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, waitingRoomLowerPanel, "seatsWithToggle");
 
         Button closeBtn = new Button("Close");
         new ButtonFX().closeBtn(closeBtn);
         closeBtn.setOnAction(event -> addPassengersWaitingRoom.close());
 
-        flowPane.getChildren().addAll(rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, waitingRoomLowerPanel, closeBtn);
+        VBox lowerPanel = new VBox();
+        lowerPanel.setAlignment(Pos.CENTER);
+        lowerPanel.setSpacing(10);
+        lowerPanel.setPadding(new Insets(20, 0, 0, 30));
+        lowerPanel.getChildren().addAll(waitingRoomLowerPanel, closeBtn);
+
+        flowPane.getChildren().addAll(header, rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, lowerPanel);
 
         addPassengersWaitingRoom.setScene(scene);
         addPassengersWaitingRoom.showAndWait();
 
     }
 
-    private void trainQueueDisplay(VBox queueOrder, VBox nameBox, VBox seatBox, PassengerQueue passengerQueue) {
-        int queueArrayLength = 0;
+    public Pane trainQueueDisplay(PassengerQueue passengerQueue) {
+        Pane trainQueue = new Pane();
 
+        int queueArrayLength = 0;
         for (Passenger p : passengerQueue.getQueueArray()) {
             if (p != null) {
                 queueArrayLength++;
@@ -821,53 +848,71 @@ public class TrainStation extends Application {
         }
         System.out.println("queueArrayLength - " + queueArrayLength);
 
-        class queueDisplay {
-            private void selectedQueue(Passenger[] queue, int arrayLen) {
-                try {
-                    Label queueOrderLabel;
-                    Label passengerSeatLabel;
-                    Label passengerNameLabel;
+        HBox queueHeaders = new HBox();
+        Label orderNumLabel = new Label("##");
+        orderNumLabel.setPadding(new Insets(0, 0, 30, 0));
+        orderNumLabel.setFont(new Font("Arial Bold", 16));
+        orderNumLabel.setStyle("-fx-underline: true;");
 
-                    for (int i = 1; i <= arrayLen; i++) {
-                        queueOrderLabel = new Label(String.format("%02d", i));
-                        queueOrderLabel.setFont(new Font("Arial Bold", 16));
-                        queueOrder.getChildren().addAll(queueOrderLabel);
-                    }
-                    for (Passenger p : queue) {
-                        if (p != null) {
-                            if (p.getSeat() < 10) {
-                                passengerSeatLabel = new Label("0" + p.getSeat());
-                            } else {
-                                passengerSeatLabel = new Label(String.valueOf(p.getSeat()));
-                            }
-                            passengerNameLabel = new Label(p.getFirstName() + " " + p.getSurname());
+        Label nameLabel = new Label("Passenger's Name");
+        nameLabel.setPadding(new Insets(0, 0, 0, 40));
+        nameLabel.setFont(new Font("Arial Bold", 16));
+        nameLabel.setStyle("-fx-underline: true;");
 
-                            passengerNameLabel.setFont(new Font("Arial Bold", 16));
-                            passengerSeatLabel.setFont(new Font("Arial Bold", 16));
+        Label seatNumLabel = new Label("Seat");
+        seatNumLabel.setPadding(new Insets(0, 0, 0, 125));
+        seatNumLabel.setFont(new Font("Arial Bold", 16));
+        seatNumLabel.setStyle("-fx-underline: true;");
 
-                            nameBox.getChildren().addAll(passengerNameLabel);
-                            seatBox.getChildren().addAll(passengerSeatLabel);
-                        }
-                    }
-                } catch (Exception e) {
-                    //
+        queueHeaders.getChildren().addAll(orderNumLabel, nameLabel, seatNumLabel);
+
+        Label queueOrderLabel;
+        Label passengerSeatLabel;
+        Label passengerNameLabel;
+
+        VBox queueOrder = new VBox();
+        queueOrder.setPadding(new Insets(40, 0, 0, 0));
+        VBox nameBox = new VBox();
+        nameBox.setPadding(new Insets(40, 0, 0, 60));
+        VBox seatBox = new VBox();
+        seatBox.setPadding(new Insets(40, 0, 0, 330));
+
+        if (!passengerQueue.isEmpty()) {
+            try {
+                trainQueue.getChildren().addAll(queueHeaders);
+                for (int i = 1; i <= queueArrayLength; i++) {
+                    queueOrderLabel = new Label(String.format("%02d", i));
+                    queueOrderLabel.setFont(new Font("Arial Bold", 16));
+                    queueOrder.getChildren().addAll(queueOrderLabel);
                 }
+                for (Passenger p : passengerQueue.getQueueArray()) {
+                    if (p != null) {
+                        if (p.getSeat() < 10) {
+                            passengerSeatLabel = new Label("0" + p.getSeat());
+                        } else {
+                            passengerSeatLabel = new Label(String.valueOf(p.getSeat()));
+                        }
+                        passengerNameLabel = new Label(p.getFirstName() + " " + p.getSurname());
+                        nameBox.getChildren().addAll(passengerNameLabel);
+                        passengerNameLabel.setFont(new Font("Arial Bold", 16));
+                        passengerSeatLabel.setFont(new Font("Arial Bold", 16));
+                        seatBox.getChildren().addAll(passengerSeatLabel);
+                    }
+                }
+                trainQueue.getChildren().addAll(queueOrder, nameBox, seatBox);
+            } catch (Exception e) {
+                //
             }
-        }
-
-        if (queueArrayLength != 0) {
-            new queueDisplay().selectedQueue(passengerQueue.getQueueArray(), queueArrayLength);
         } else {
             alertBoxWindowTypeTwo("Alert!", "Train Queue is Empty!", "1");
         }
-
+        return trainQueue;
     }
 
     private void addPassengersToQueue(int station, String[][][][] passengersArray, Passenger[]
             waitingRoom, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) {
         int queueOneLen = 0;
         int queueTwoLen = 0;
-
 
         for (Passenger p : passengerQueueOne.getQueueArray()) {
             if (p != null) {
@@ -892,7 +937,7 @@ public class TrainStation extends Application {
         } else if (queueOneLen < queueTwoLen) {
             passengerQueueOne.add(waitingRoom);
         } else {
-            //adding passengers to the queue from queue01
+            //start adding passengers to the queue from queue01
             passengerQueueOne.add(waitingRoom);
         }
 
@@ -913,14 +958,12 @@ public class TrainStation extends Application {
         Label headerQueue = new Label("Train Queue");
         headerQueue.setFont(new Font("Arial Bold", 22));
         headerQueue.setTextFill(Paint.valueOf("#414141"));
-        headerQueue.setPadding(new Insets(0, 200, 30, 110));
+        headerQueue.setPadding(new Insets(0, 200, 20, 120));
 
-        Scene sceneQueue = new Scene(flowPaneQueue, 425, 600);
+        Scene sceneQueue = new Scene(flowPaneQueue, 430, 175);
 
         Label emptySpace = new Label();
-        emptySpace.setPadding(new Insets(0, 0, 0, 50));
-
-        FlowPane trainQueue = new FlowPane();
+        emptySpace.setPadding(new Insets(0, 0, 0, 40));
 
         Button queueOne = new Button("Queue 01");
         new ButtonFX().addBtn(queueOne);
@@ -935,68 +978,61 @@ public class TrainStation extends Application {
         closeBtnQueue.setOnAction(event1 -> viewTrainQueueStage.close());
 
         HBox queueHeaders = new HBox();
-        queueHeaders.setPadding(new Insets(15, 0, 0, 0));
+        queueHeaders.setPadding(new Insets(15, 0, 0, 50));
 
         HBox buttons = new HBox();
         buttons.setSpacing(10);
-        buttons.setPrefWidth(360);
-        buttons.getChildren().addAll(queueOne, queueTwo, emptySpace, closeBtnQueue);
         buttons.setPadding(new Insets(10));
+        buttons.setAlignment(Pos.CENTER);
         buttons.setStyle("-fx-background-color: rgba(0,0,0,0.04); -fx-background-radius: 30;");
+        buttons.getChildren().addAll(queueOne, queueTwo);
 
-        Label orderNumLabel = new Label("##");
-        orderNumLabel.setFont(new Font("Arial Bold", 16));
-        orderNumLabel.setStyle("-fx-underline: true;");
+        Pane trainQueueSection = new Pane();
+        trainQueueSection.setPrefWidth(375);
 
-        Label nameLabel = new Label("Passenger's Name");
-        nameLabel.setPadding(new Insets(0, 0, 25, 40));
-        nameLabel.setFont(new Font("Arial Bold", 16));
-        nameLabel.setStyle("-fx-underline: true;");
+        flowPaneQueue.getChildren().addAll(headerQueue, buttons, emptySpace, closeBtnQueue, trainQueueSection);
 
-        Label seatNumLabel = new Label("Seat");
-        seatNumLabel.setPadding(new Insets(0, 0, 25, 125));
-        seatNumLabel.setFont(new Font("Arial Bold", 16));
-        seatNumLabel.setStyle("-fx-underline: true;");
+        queueOne.setOnMouseClicked(event -> {
+            try {
+                trainQueueSection.getChildren().addAll(trainQueueDisplay(passengerQueueOne));
+                if (!passengerQueueOne.isEmpty()) {
+                    FlowPane flowPaneQueueTwo = new FlowPane();
+                    flowPaneQueueTwo.setHgap(10);
+                    flowPaneQueueTwo.setVgap(10);
+                    flowPaneQueueTwo.setPadding(new Insets(30));
+                    Scene sceneQueueTwo = new Scene(flowPaneQueueTwo, 425, 700);
+                    flowPaneQueueTwo.getChildren().addAll(headerQueue, buttons, emptySpace, closeBtnQueue, trainQueueSection);
+                    viewTrainQueueStage.setScene(sceneQueueTwo);
+                    viewTrainQueueStage.showAndWait();
+                }
+            } catch (Exception e) {
+                //
+            }
+        });
 
-        queueHeaders.getChildren().addAll(orderNumLabel, nameLabel, seatNumLabel);
-        trainQueue.getChildren().addAll(queueHeaders);
-
-        VBox queueOrder = new VBox();
-        queueOrder.setPadding(new Insets(0, 50, 0, 0));
-        VBox nameBox = new VBox();
-        VBox seatBox = new VBox();
-        seatBox.setPadding(new Insets(0, 0, 0, 95));
-
-        trainQueue.getChildren().addAll(queueOrder, nameBox, seatBox);
-
-        try {
-            queueOne.setOnMouseClicked(event -> {
-                trainQueueDisplay(queueOrder, nameBox, seatBox, passengerQueueOne);
-                trainQueue.getChildren().removeAll(queueOrder, nameBox, seatBox);
-                //queueOne.setOnMouseClicked(event1 -> trainQueue.getChildren().removeAll(queueOrder, nameBox, seatBox));
-            });
-        } catch (Exception e) {
-            //
-        }
-
-        try {
-            queueTwo.setOnMouseClicked(event -> {
-                trainQueueDisplay(queueOrder, nameBox, seatBox, passengerQueueTwo);
-                //queueTwo.setOnMouseClicked(event1 -> trainQueue.getChildren().removeAll(queueOrder, nameBox, seatBox));
-            });
-
-            trainQueue.getChildren().addAll(queueOrder, nameBox, seatBox);
-        } catch (Exception e) {
-            //
-        }
-
-        flowPaneQueue.getChildren().addAll(headerQueue, buttons, trainQueue);
+        queueTwo.setOnMouseClicked(event -> {
+            try {
+                trainQueueSection.getChildren().addAll(trainQueueDisplay(passengerQueueTwo));
+                if (!passengerQueueTwo.isEmpty()) {
+                    FlowPane flowPaneQueueTwo = new FlowPane();
+                    flowPaneQueueTwo.setHgap(10);
+                    flowPaneQueueTwo.setVgap(10);
+                    flowPaneQueueTwo.setPadding(new Insets(30));
+                    Scene sceneQueueTwo = new Scene(flowPaneQueueTwo, 425, 700);
+                    flowPaneQueueTwo.getChildren().addAll(headerQueue, buttons, emptySpace, closeBtnQueue, trainQueueSection);
+                    viewTrainQueueStage.setScene(sceneQueueTwo);
+                    viewTrainQueueStage.showAndWait();
+                }
+            } catch (Exception e) {
+                //
+            }
+        });
 
         viewTrainQueueStage.setScene(sceneQueue);
         viewTrainQueueStage.showAndWait();
     }
 
-    private void deletePassengerFromQueue(PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) {
+    private void deletePassengerFromQueue(PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) throws Exception {
         System.out.println("--------------------------------------------------");
 
         System.out.println("\n******************");
@@ -1028,8 +1064,10 @@ public class TrainStation extends Application {
         checkRemoveName = sc.next();
 
         if (checkRemoveNameListQueueOne.contains(checkRemoveName)) {
+            System.out.println("queueOne");
             passengerQueueOne.remove();
         } else if (checkRemoveNameListQueueTwo.contains(checkRemoveName)) {
+            System.out.println("queueTwo");
             passengerQueueTwo.remove();
         } else {
             System.out.println("No bookings were made by " + checkRemoveName);
@@ -1043,7 +1081,7 @@ public class TrainStation extends Application {
 
     private void displayAll(int station, String[][][][] passengersArray, Passenger[] waitingRoom, Passenger[]
             boardedPassengers, PassengerQueue
-                                    passengerQueueOne, PassengerQueue passengerQueueTwo) {
+                                    passengerQueueOne, PassengerQueue passengerQueueTwo) throws Exception {
         System.out.println("--------------------------------------------------");
 
         System.out.println("\n*****************");
@@ -1065,7 +1103,7 @@ public class TrainStation extends Application {
         flowPane.setVgap(10);
         flowPane.setPadding(new Insets(40));
 
-        Scene scene = new Scene(flowPane, 1725, 700);
+        Scene scene = new Scene(flowPane, 1650, 700);
 
         Label header1 = new Label("Waiting Room");
         header1.setFont(new Font("Arial Bold", 22));
@@ -1080,7 +1118,7 @@ public class TrainStation extends Application {
         Label header3 = new Label("Train");
         header3.setFont(new Font("Arial Bold", 22));
         header3.setTextFill(Paint.valueOf("#414141"));
-        header3.setPadding(new Insets(0, 999, 25, 125));
+        header3.setPadding(new Insets(0, 999, 25, 100));
 
         Button queueOne = new Button("Queue 01");
         new ButtonFX().addBtn(queueOne);
@@ -1119,13 +1157,11 @@ public class TrainStation extends Application {
         HBox waitingRoomLowerPanel = new HBox();
         HBox waitingRoomLowerPanelTwo = new HBox();
 
-        FlowPane trainQueue = new FlowPane();
-
         Label emptySpace = new Label();
         emptySpace.setPadding(new Insets(0, 0, 0, 325));
 
         Label emptySpaceTwo = new Label();
-        emptySpaceTwo.setPadding(new Insets(0, 0, 0, 290));
+        emptySpaceTwo.setPadding(new Insets(0, 0, 0, 240));
 
         Button emptySpaceThree = new Button();
         emptySpaceThree.setStyle("-fx-background-color: null");
@@ -1134,53 +1170,22 @@ public class TrainStation extends Application {
         trainSeatsDisplay(station, passengersArray, passengerQueueOne, passengerQueueTwo, waitingRoom, boardedPassengers, rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, waitingRoomLowerPanel, "displayAll");
         trainSeatsDisplay(station, passengersArray, passengerQueueOne, passengerQueueTwo, waitingRoom, boardedPassengers, trainSeatsRowOne, trainSeatsRowTwo, trainSeatsRowThree, trainSeatsRowFour, trainSeatsRowFive, trainSeatsRowSix, waitingRoomLowerPanelTwo, "trainSeatsDisplay");
 
-        HBox queueHeaders = new HBox();
-
-        Label orderNumLabel = new Label("##");
-        orderNumLabel.setFont(new Font("Arial Bold", 16));
-        orderNumLabel.setStyle("-fx-underline: true;");
-
-        Label nameLabel = new Label("Passenger's Name");
-        nameLabel.setPadding(new Insets(0, 0, 25, 40));
-        nameLabel.setFont(new Font("Arial Bold", 16));
-        nameLabel.setStyle("-fx-underline: true;");
-
-        Label seatNumLabel = new Label("Seat");
-        seatNumLabel.setPadding(new Insets(0, 0, 25, 125));
-        seatNumLabel.setFont(new Font("Arial Bold", 16));
-        seatNumLabel.setStyle("-fx-underline: true;");
-
-        queueHeaders.getChildren().addAll(orderNumLabel, nameLabel, seatNumLabel);
-        trainQueue.getChildren().addAll(queueHeaders);
-
-        VBox queueOrder = new VBox();
-        queueOrder.setPadding(new Insets(0, 50, 0, 0));
-        VBox nameBox = new VBox();
-        VBox seatBox = new VBox();
-        seatBox.setPadding(new Insets(0, 0, 0, 95));
-
-
         Button closeBtn = new Button("Close");
         new ButtonFX().closeBtn(closeBtn);
         closeBtn.setOnAction(event -> window.close());
 
-        try {
-            queueOne.setOnMouseClicked(event -> {
-                trainQueue.getChildren().addAll(queueOrder, nameBox, seatBox);
-                trainQueueDisplay(queueOrder, nameBox, seatBox, passengerQueueOne);
-                //queueOne.setOnMouseClicked(event1 -> trainQueue.getChildren().removeAll(queueOrder, nameBox, seatBox));
-            });
+        Pane trainQueueSection = new Pane();
+        trainQueueSection.setPrefWidth(375);
 
-            queueTwo.setOnMouseClicked(event -> {
-                //trainQueue.getChildren().addAll(queueOrder, nameBox, seatBox);
-                trainQueueDisplay(queueOrder, nameBox, seatBox, passengerQueueTwo);
-                queueTwo.setOnMouseClicked(event1 -> trainQueue.getChildren().removeAll(queueOrder, nameBox, seatBox));
-            });
-        } catch (IllegalArgumentException e) {
-            //
-        }
+        queueOne.setOnMouseClicked(event -> {
+            trainQueueSection.getChildren().addAll(trainQueueDisplay(passengerQueueOne));
+        });
 
-        flowPane.getChildren().addAll(headers, rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, separator, trainQueue, separatorTwo, trainSeatsRowOne, trainSeatsRowTwo, trainSeatsRowThree, trainSeatsRowFour, trainSeatsRowFive, trainSeatsRowSix);
+        queueTwo.setOnMouseClicked(event -> {
+            trainQueueSection.getChildren().addAll(trainQueueDisplay(passengerQueueTwo));
+        });
+
+        flowPane.getChildren().addAll(headers, rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, separator, trainQueueSection, separatorTwo, trainSeatsRowOne, trainSeatsRowTwo, trainSeatsRowThree, trainSeatsRowFour, trainSeatsRowFive, trainSeatsRowSix);
         flowPane.getChildren().addAll(emptySpaceThree, waitingRoomLowerPanel, emptySpace, closeBtn, emptySpaceTwo, waitingRoomLowerPanelTwo);
 
         window.setScene(scene);
@@ -1202,8 +1207,13 @@ public class TrainStation extends Application {
         int queueOneLen = 0;
         int queueTwoLen = 0;
 
-        int minTimeQueueOne = passengerQueueOne.getQueueArray()[0].getSecondsInQueue();
-        int minTimeQueueTwo = passengerQueueTwo.getQueueArray()[0].getSecondsInQueue();
+        int minTimeQueueOne = 0;
+        int minTimeQueueTwo = 0;
+        try {
+            minTimeQueueOne = passengerQueueOne.getQueueArray()[0].getSecondsInQueue();
+            minTimeQueueTwo = passengerQueueTwo.getQueueArray()[0].getSecondsInQueue();
+        } catch (Exception ignored) {
+        }
 
         for (Passenger p : passengerQueueOne.getQueueArray()) {
             if (p != null) {
@@ -1309,10 +1319,10 @@ public class TrainStation extends Application {
 
         if (station == 0) {
             destination = "Badulla to Colombo";
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueue.txt");
+            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueueReport.txt");
         } else {
             destination = "Colombo to Badulla";
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueue.txt");
+            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueueReport.txt");
         }
 
         if (boardedArrayLen > 0) {
@@ -1321,6 +1331,7 @@ public class TrainStation extends Application {
                     bufferedWriter = new BufferedWriter(new FileWriter(file, true));
                     for (Passenger p : boardedPassengers) {
                         if (p != null) {
+                            bufferedWriter.write("");
                             bufferedWriter.write("Destination - " + destination + " | Booked date - " + localDate +
                                     " | Passenger name - " + p.getFirstName() + " " + p.getSurname() +
                                     " | NIC - " + p.getNic() +
@@ -1337,16 +1348,16 @@ public class TrainStation extends Application {
                     double averageWaitingTimeQueueTwo = sumOfTime / passengerQueueTwo.getMaxLength();
 
                     bufferedWriter.write("\nQueue 01");
-                    bufferedWriter.write("\nMaximum Queue Length          : " + passengerQueueOne.getMaxLength());
-                    bufferedWriter.write("\nMaximum Waiting Time          : " + passengerQueueOne.getMaxStayInQueue());
-                    bufferedWriter.write("\nMinimum Waiting Time          : " + minTimeQueueOne);
-                    bufferedWriter.write("\nAverage Waiting Time          : " + f.format(averageWaitingTimeQueueOne));
+                    bufferedWriter.write("\nMaximum Queue Length      : " + passengerQueueOne.getMaxLength());
+                    bufferedWriter.write("\nMaximum Waiting Time      : " + passengerQueueOne.getMaxStayInQueue());
+                    bufferedWriter.write("\nMinimum Waiting Time      : " + minTimeQueueOne);
+                    bufferedWriter.write("\nAverage Waiting Time      : " + f.format(averageWaitingTimeQueueOne));
                     bufferedWriter.newLine();
                     bufferedWriter.write("\nQueue 02");
-                    bufferedWriter.write("\nMaximum Queue Length          : " + passengerQueueTwo.getMaxLength());
-                    bufferedWriter.write("\nMaximum Waiting Time          : " + passengerQueueTwo.getMaxStayInQueue());
-                    bufferedWriter.write("\nMinimum Waiting Time          : " + minTimeQueueTwo);
-                    bufferedWriter.write("\nAverage Waiting Time          : " + f.format(averageWaitingTimeQueueTwo));
+                    bufferedWriter.write("\nMaximum Queue Length      : " + passengerQueueTwo.getMaxLength());
+                    bufferedWriter.write("\nMaximum Waiting Time      : " + passengerQueueTwo.getMaxStayInQueue());
+                    bufferedWriter.write("\nMinimum Waiting Time      : " + minTimeQueueTwo);
+                    bufferedWriter.write("\nAverage Waiting Time      : " + f.format(averageWaitingTimeQueueTwo));
                     bufferedWriter.newLine();
 
                     bufferedWriter.flush();
@@ -1363,4 +1374,68 @@ public class TrainStation extends Application {
         }
     }
 
+    private void storeData(int station, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) {
+        System.out.println("--------------------------------------------------");
+
+        System.out.println("\n***************");
+        System.out.println("\033[1;93m" + "STORE DATA" + "\033[0m");
+        System.out.println("***************\n");
+
+        File file;
+        String destination;
+
+        if (station == 0) {
+            destination = "Badulla to Colombo";
+            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueue.txt");
+        } else {
+            destination = "Colombo to Badulla";
+            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueue.txt");
+        }
+        storeDataMain(file, destination, 1, passengerQueueOne);
+        storeDataMain(file, destination, 2, passengerQueueTwo);
+
+        System.out.println("--------------------------------------------------");
+    }
+
+    private void storeDataMain(File file, String destination, int queue, PassengerQueue passengerQueue) {
+        LocalDate localDate = LocalDate.now();
+
+        int boardedArrayLen = 0;
+        for (Passenger p : passengerQueue.getQueueArray()) {
+            if (p != null) {
+                boardedArrayLen++;
+            }
+        }
+
+        BufferedWriter bufferedWriter;
+
+        if (boardedArrayLen > 0) {
+            while (true) {
+                try {
+                    bufferedWriter = new BufferedWriter(new FileWriter(file, false));
+                    bufferedWriter.write("Queue " + queue + "\n\n");
+                    for (Passenger p : passengerQueue.getQueueArray()) {
+                        if (p != null) {
+                            bufferedWriter.write("Destination - " + destination + " | Booked date - " + localDate +
+                                    " | Passenger name - " + p.getFirstName() + " " + p.getSurname() +
+                                    " | NIC - " + p.getNic() +
+                                    " | Seat #" + p.getSeat());
+                            bufferedWriter.newLine();
+                        }
+                    }
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+                    break;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("File not found!\n");
+                }
+            }
+        }
+    }
+
+    private void loadData(int station, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) {
+    }
 }
