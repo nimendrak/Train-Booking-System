@@ -81,7 +81,5 @@ public class ButtonFX {
             btnTwo.setStyle("-fx-background-color: null; -fx-background-radius: 30;");
             selection.setStyle("-fx-background-color: #dddddd; -fx-background-radius: 30");
         });
-
-
     }
 }

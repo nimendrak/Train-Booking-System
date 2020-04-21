@@ -1,0 +1,82 @@
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith pahilahe | NIC - 111111111v | Seat #2
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - kasun silva | NIC - 222222222v | Seat #3
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith kariyawasam | NIC - 333333333v | Seat #4
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - lewis preme | NIC - 444444444v | Seat #5
+
+Queue 01
+Maximum Queue Length      : 2
+Maximum Waiting Time      : 23
+Minimum Waiting Time      : 10
+Average Waiting Time      : 25.50
+
+Queue 02
+Maximum Queue Length      : 3
+Maximum Waiting Time      : 51
+Minimum Waiting Time      : 9
+Average Waiting Time      : 17.00
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith pahilahe | NIC - 111111111v | Seat #2
+
+Queue 01
+Maximum Queue Length      : 2
+Maximum Waiting Time      : 21
+Minimum Waiting Time      : 11
+Average Waiting Time      : 10.50
+
+Queue 02
+Maximum Queue Length      : 0
+Maximum Waiting Time      : 0
+Minimum Waiting Time      : 0
+Average Waiting Time      : ∞
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith pahilahe | NIC - 111111111v | Seat #2
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - kasun silva | NIC - 222222222v | Seat #3
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith kariyawasam | NIC - 333333333v | Seat #4
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - lewis preme | NIC - 444444444v | Seat #5
+
+Queue 01
+Maximum Queue Length      : 3
+Maximum Waiting Time      : 35
+Minimum Waiting Time      : 12
+Average Waiting Time      : 17.33
+
+Queue 02
+Maximum Queue Length      : 2
+Maximum Waiting Time      : 52
+Minimum Waiting Time      : 10
+Average Waiting Time      : 26.00
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith pahilahe | NIC - 111111111v | Seat #2
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - kasun silva | NIC - 222222222v | Seat #3
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith kariyawasam | NIC - 333333333v | Seat #4
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - lewis preme | NIC - 444444444v | Seat #5
+
+Queue 01
+Maximum Queue Length      : 5
+Maximum Waiting Time      : 45
+Minimum Waiting Time      : 9
+Average Waiting Time      : 9.00
+
+Queue 02
+Maximum Queue Length      : 0
+Maximum Waiting Time      : 0
+Minimum Waiting Time      : 0
+Average Waiting Time      : ∞
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith pahilahe | NIC - 111111111v | Seat #2
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - kasun silva | NIC - 222222222v | Seat #3
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - janith kariyawasam | NIC - 333333333v | Seat #4
+Destination - Colombo - Hatton | Booked date - 2020-04-21 | Passenger name - lewis preme | NIC - 444444444v | Seat #5
+
+Queue 01
+Maximum Queue Length      : 1
+Maximum Waiting Time      : 15
+Minimum Waiting Time      : 15
+Average Waiting Time      : 61.00
+
+Queue 02
+Maximum Queue Length      : 4
+Maximum Waiting Time      : 61
+Minimum Waiting Time      : 9
+Average Waiting Time      : 15.25

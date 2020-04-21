@@ -1,0 +1,4 @@
+Queue 1 | Destination - Colombo - Hatton | Booked date - 2020-04-20 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Queue 2 | Destination - Colombo - Hatton | Booked date - 2020-04-20 | Passenger name - nimendra kariyawasam | NIC - 981871870v | Seat #2
+
+
