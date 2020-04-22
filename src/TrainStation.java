@@ -888,13 +888,16 @@ public class TrainStation extends Application {
         });
 
         toggleButtonOne.setOnAction(event1 -> {
-            seat.setStyle("-fx-background-color: null; -fx-border-color: #00A69C; -fx-border-width: 3; -fx-border-radius: 8");
-            for (int j = (index[0] - 1); j < waitingRoom.length - 1; j++) {
-                waitingRoom[j] = waitingRoom[j + 1];
-            }
             try {
-                tempSeats.remove(index[0] - 1);
-            } catch (Exception ignored) {
+                seat.setStyle("-fx-background-color: null; -fx-border-color: #00A69C; -fx-border-width: 3; -fx-border-radius: 8");
+                for (int j = (index[0] - 1); j < waitingRoom.length - 1; j++) {
+                    waitingRoom[j] = waitingRoom[j + 1];
+                }
+                try {
+                    tempSeats.remove(index[0] - 1);
+                } catch (Exception ignored) {
+                }
+            } catch (Exception ignore) {
             }
         });
     }
@@ -910,19 +913,22 @@ public class TrainStation extends Application {
         Stage addPassengersWaitingRoom = new Stage();
         addPassengersWaitingRoom.setResizable(false);
         addPassengersWaitingRoom.initModality(Modality.APPLICATION_MODAL);
-        if (station == 0) {
-            addPassengersWaitingRoom.setTitle("Destination - Colombo to Hatton");
-        } else if (station == 1) {
-            addPassengersWaitingRoom.setTitle("Destination - Colombo to Ella");
-        } else if (station == 2) {
-            addPassengersWaitingRoom.setTitle("Destination - Colombo to Badulla");
-        } else if (station == 3) {
-            addPassengersWaitingRoom.setTitle("Destination - Badulla to Hatton");
-        } else if (station == 4) {
-            addPassengersWaitingRoom.setTitle("Destination - Badulla to Ella");
-        } else if (station == 5) {
-            addPassengersWaitingRoom.setTitle("Destination - Badulla to Colombo");
+
+        switch (station) {
+            case 0:
+                addPassengersWaitingRoom.setTitle("Destination - Colombo to Hatton");
+            case 1:
+                addPassengersWaitingRoom.setTitle("Destination - Colombo to Ella");
+            case 2:
+                addPassengersWaitingRoom.setTitle("Destination - Colombo to Badulla");
+            case 3:
+                addPassengersWaitingRoom.setTitle("Destination - Badulla to Hatton");
+            case 4:
+                addPassengersWaitingRoom.setTitle("Destination - Badulla to Ella");
+            case 5:
+                addPassengersWaitingRoom.setTitle("Destination - Badulla to Colombo");
         }
+
         Image windowIcon = new Image(getClass().getResourceAsStream("seatIcon.png"));
         addPassengersWaitingRoom.getIcons().add(windowIcon);
         addPassengersWaitingRoom.setOnCloseRequest(event -> {
@@ -976,6 +982,13 @@ public class TrainStation extends Application {
 
         class queueDisplay {
             private void display(PassengerQueue passengerQueue) {
+                int queueLen = 0;
+                for (Passenger p : passengerQueue.getQueueArray()) {
+                    if (p != null) {
+                        queueLen++;
+                    }
+                }
+
                 HBox queueHeaders = new HBox();
                 Label orderNumLabel = new Label("##");
                 orderNumLabel.setPadding(new Insets(0, 0, 30, 0));
@@ -1008,7 +1021,7 @@ public class TrainStation extends Application {
                 if (!passengerQueue.isEmpty()) {
                     try {
                         trainQueue.getChildren().addAll(queueHeaders);
-                        for (int i = 1; i <= passengerQueue.next; i++) {
+                        for (int i = 1; i <= queueLen; i++) {
                             queueOrderLabel = new Label(String.format("%02d", i));
                             queueOrderLabel.setFont(new Font("Arial Bold", 16));
                             queueOrder.getChildren().addAll(queueOrderLabel);
@@ -1045,7 +1058,7 @@ public class TrainStation extends Application {
         return trainQueue;
     }
 
-    private void addPassengersToQueue(Passenger[] waitingRoom, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) {
+    private void addPassengersToQueue(Passenger[] waitingRoom, PassengerQueue passengerQueueOne, PassengerQueue passengerQueueTwo) throws InterruptedException {
         System.out.println("--------------------------------------------------");
 
         System.out.println("\n*********************************");
@@ -1062,17 +1075,10 @@ public class TrainStation extends Application {
         // this class will sort the queue arrays by seat numbers
         class queueSort {
             private void sort(PassengerQueue passengerQueue) {
-                int queueLen = 0;
-                for (Passenger p : passengerQueue.getQueueArray()) {
-                    if (p != null) {
-                        queueLen++;
-                    }
-                }
-
                 //sorting the queue array by seat number
                 Passenger temp;
-                for (int i = 0; i < queueLen; i++) {
-                    for (int j = i + 1; j < queueLen; j++) {
+                for (int i = 0; i < passengerQueue.next; i++) {
+                    for (int j = i + 1; j < passengerQueue.next; j++) {
                         if (passengerQueue.getQueueArray()[i].getSeat() > passengerQueue.getQueueArray()[j].getSeat()) {
                             temp = passengerQueue.getQueueArray()[i];
                             passengerQueue.getQueueArray()[i] = passengerQueue.getQueueArray()[j];
@@ -1083,38 +1089,36 @@ public class TrainStation extends Application {
             }
         }
 
-        // this class will display the queue details
-        class queueDisplay {
-            private void display(PassengerQueue passengerQueue) {
-                for (Passenger p : passengerQueue.getQueueArray()) {
-                    if (p != null) {
-                        System.out.println("Passenger name  - " + "\033[1;95m" + p.getFirstName() + " " + p.getSurname() + "\033[0m");
-                        System.out.println("NIC             - " + p.getNic());
-                        System.out.println("Seat            - " + "\033[1;31m" + "#" + p.getSeat() + "\033[0m");
-                        System.out.println();
-                    }
-                }
-            }
-        }
-
         // this class will add passengers to the queue
         class queueAdd {
-            private void add(int randomPassengers, int count, int forLoopLen) {
+            private void add(int count, int forLoopLen) {
                 for (int j = 0; j < forLoopLen; j++) {
                     if (passengerQueueOne.next > passengerQueueTwo.next) {
-                        passengerQueueTwo.add(waitingRoom[j]);
+                        if (!passengerQueueTwo.isFull()) {
+                            passengerQueueTwo.add(waitingRoom[j]);
+                        } else {
+                            alertWindow("Alert!", "Train Queue is full!", "2");
+                        }
 
                     } else if (passengerQueueOne.next < passengerQueueTwo.next) {
-                        passengerQueueOne.add(waitingRoom[j]);
+                        if (!passengerQueueOne.isFull()) {
+                            passengerQueueOne.add(waitingRoom[j]);
+                        } else {
+                            alertWindow("Alert!", "Train Queue is full!", "2");
+                        }
 
                     } else {
-                        passengerQueueOne.add(waitingRoom[j]);
+                        if (!passengerQueueOne.isFull()) {
+                            passengerQueueOne.add(waitingRoom[j]);
+                        } else {
+                            alertWindow("Alert!", "Train Queue is full!", "2");
+                        }
                     }
                     new queueSort().sort(passengerQueueOne);
                     new queueSort().sort(passengerQueueTwo);
                     count++;
                 }
-                for (int j = 0; j < randomPassengers; j++) {
+                for (int j = 0; j < forLoopLen; j++) {
                     waitingRoom[j] = null;
                 }
                 int index = 0;
@@ -1136,11 +1140,10 @@ public class TrainStation extends Application {
         * and each of those passengers will add to the shortest queue.
         * */
             if (randomPassengers <= waitingRoomLen) {
-                new queueAdd().add(randomPassengers, count, randomPassengers);
-
+                new queueAdd().add(count, randomPassengers);
                 // else all the passengers will add to the train queue at once according to the length
             } else {
-                new queueAdd().add(randomPassengers, count, waitingRoomLen);
+                new queueAdd().add(count, waitingRoomLen);
             }
         } catch (Exception e) {
             //
@@ -1148,15 +1151,16 @@ public class TrainStation extends Application {
 
         // display added passengers in console
         if (!passengerQueueOne.isEmpty()) {
-            System.out.println("\033[4;37m" + "\nQueue 01" + "\033[0m" + "\n");
-            new queueDisplay().display(passengerQueueOne);
+            TimeUnit.SECONDS.sleep(1);
+            System.out.println("\n" + "\033[1;31m" + "Queue 01 => " + "\033[0m" + passengerQueueOne.next + " passengers have arrived to the queue");
+
         }
         if (!passengerQueueTwo.isEmpty()) {
-            System.out.println("\033[4;37m" + "\nQueue 02" + "\033[0m" + "\n");
-            new queueDisplay().display(passengerQueueTwo);
+            TimeUnit.SECONDS.sleep(1);
+            System.out.println("\033[1;31m" + "Queue 02 => " + "\033[0m" + passengerQueueTwo.next + " passengers have arrived to the queue");
         }
 
-        System.out.println("--------------------------------------------------");
+        System.out.println("\n--------------------------------------------------");
 
         Stage viewTrainQueueStage = new Stage();
         viewTrainQueueStage.setResizable(false);
@@ -1338,7 +1342,7 @@ public class TrainStation extends Application {
             }
 
             // linear-search function to find the index of the chose seat number
-            public int findIndex(Passenger[] arr, Passenger t) {
+            private int findIndex(Passenger[] arr, Passenger t) {
 
                 // if array is Null
                 if (arr == null) {
@@ -1384,18 +1388,20 @@ public class TrainStation extends Application {
 
         Stage window = new Stage();
         window.setResizable(false);
-        if (station == 0) {
-            window.setTitle("Destination - Colombo to Hatton");
-        } else if (station == 1) {
-            window.setTitle("Destination - Colombo to Ella");
-        } else if (station == 2) {
-            window.setTitle("Destination - Colombo to Badulla");
-        } else if (station == 3) {
-            window.setTitle("Destination - Badulla to Hatton");
-        } else if (station == 4) {
-            window.setTitle("Destination - Badulla to Ella");
-        } else if (station == 5) {
-            window.setTitle("Destination - Badulla to Colombo");
+
+        switch (station) {
+            case 0:
+                window.setTitle("Destination - Colombo to Hatton");
+            case 1:
+                window.setTitle("Destination - Colombo to Ella");
+            case 2:
+                window.setTitle("Destination - Colombo to Badulla");
+            case 3:
+                window.setTitle("Destination - Badulla to Hatton");
+            case 4:
+                window.setTitle("Destination - Badulla to Ella");
+            case 5:
+                window.setTitle("Destination - Badulla to Colombo");
         }
 
         Image windowIcon = new Image(getClass().getResourceAsStream("seatIcon.png"));
@@ -1547,18 +1553,24 @@ public class TrainStation extends Application {
         passengerQueueOne.setMaxLength(queueOneLen);
         passengerQueueTwo.setMaxLength(queueTwoLen);
 
-        if (station == 0) {
-            generateReport(0, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
-        } else if (station == 1) {
-            generateReport(1, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
-        } else if (station == 2) {
-            generateReport(2, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
-        } else if (station == 3) {
-            generateReport(3, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
-        } else if (station == 4) {
-            generateReport(4, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
-        } else {
-            generateReport(5, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
+        switch (station) {
+            case 0:
+                generateReport(0, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
+                break;
+            case 1:
+                generateReport(1, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
+                break;
+            case 2:
+                generateReport(2, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
+                break;
+            case 3:
+                generateReport(3, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
+                break;
+            case 4:
+                generateReport(4, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
+                break;
+            case 5:
+                generateReport(5, passengerQueueOne, passengerQueueTwo, boardedPassengers, minTimeQueueOne, minTimeQueueTwo);
         }
 
         System.out.println("\n--------------------------------------------------");
@@ -1613,28 +1625,34 @@ public class TrainStation extends Application {
             }
         }
 
-        File file;
-        String destination;
+        File file = null;
+        String destination = null;
         BufferedWriter bufferedWriter;
 
-        if (station == 0) {
-            destination = "Colombo - Hatton";
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToHattonQueueReport.txt");
-        } else if (station == 1) {
-            destination = "Colombo - Ella";
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToEllaQueueReport.txt");
-        } else if (station == 2) {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueueReport.txt");
-            destination = "Destination - Colombo - Badulla";
-        } else if (station == 3) {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToHattonQueueReport.txt");
-            destination = "Destination - Badulla - Hatton";
-        } else if (station == 4) {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToEllaQueueReport.txt");
-            destination = "Destination - Badulla - Ella";
-        } else {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueueReport.txt");
-            destination = "Destination - Badulla - Colombo";
+        switch (station) {
+            case 0:
+                destination = "Colombo - Hatton";
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToHattonQueueReport.txt");
+                break;
+            case 1:
+                destination = "Colombo - Ella";
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToEllaQueueReport.txt");
+                break;
+            case 2:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueueReport.txt");
+                destination = "Destination - Colombo - Badulla";
+                break;
+            case 3:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToHattonQueueReport.txt");
+                destination = "Destination - Badulla - Hatton";
+                break;
+            case 4:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToEllaQueueReport.txt");
+                destination = "Destination - Badulla - Ella";
+                break;
+            case 5:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueueReport.txt");
+                destination = "Destination - Badulla - Colombo";
         }
 
         if (boardedArrayLen > 0) {
@@ -1706,7 +1724,7 @@ public class TrainStation extends Application {
 
         Scene trainQueueScene;
         if (queueArrayLength > 2) {
-            trainQueueScene = new Scene(trainQueue, 630, 430 + (10 * queueArrayLength));
+            trainQueueScene = new Scene(trainQueue, 630, 430 + (25 * queueArrayLength));
         } else {
             trainQueueScene = new Scene(trainQueue, 630, 430);
         }
@@ -1857,29 +1875,35 @@ public class TrainStation extends Application {
         System.out.println("\033[1;93m" + "STORE DATA" + "\033[0m");
         System.out.println("**********\n");
 
-        File file;
-        String destination;
+        File file = null;
+        String destination = null;
         LocalDate localDate = LocalDate.now();
 
         if (!passengerQueueOne.isEmpty() | !passengerQueueTwo.isEmpty()) {
-            if (station == 0) {
-                destination = "Colombo - Hatton";
-                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToHattonQueue.txt");
-            } else if (station == 1) {
-                destination = "Colombo to Ella";
-                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToEllaQueue.txt");
-            } else if (station == 2) {
-                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueue.txt");
-                destination = "Colombo - Badulla";
-            } else if (station == 3) {
-                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToHattonQueue.txt");
-                destination = "Badulla - Hatton";
-            } else if (station == 4) {
-                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToEllaQueue.txt");
-                destination = "Badulla - Ella";
-            } else {
-                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueue.txt");
-                destination = "Badulla - Colombo";
+            switch (station) {
+                case 0:
+                    destination = "Colombo - Hatton";
+                    file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToHattonQueue.txt");
+                    break;
+                case 1:
+                    destination = "Colombo to Ella";
+                    file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToEllaQueue.txt");
+                    break;
+                case 2:
+                    file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueue.txt");
+                    destination = "Colombo - Badulla";
+                    break;
+                case 3:
+                    file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToHattonQueue.txt");
+                    destination = "Badulla - Hatton";
+                    break;
+                case 4:
+                    file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToEllaQueue.txt");
+                    destination = "Badulla - Ella";
+                    break;
+                case 5:
+                    file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueue.txt");
+                    destination = "Badulla - Colombo";
             }
             storeQueueData(file, destination, 1, passengerQueueOne);
             storeQueueData(file, destination, 2, passengerQueueTwo);
@@ -1934,8 +1958,8 @@ public class TrainStation extends Application {
 
         LocalDate localDate = LocalDate.now();
 
-        File file;
-        String destination;
+        File file = null;
+        String destination = null;
         Scanner sc = new Scanner(System.in);
 
         int station;
@@ -1949,24 +1973,30 @@ public class TrainStation extends Application {
             station = (sc.nextInt() - 1);
         } while (station != 0 & station != 1 & station != 2 & station != 3 & station != 4 & station != 5 & station != 6);
 
-        if (station == 0) {
-            destination = "Colombo - Hatton";
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToHattonQueue.txt");
-        } else if (station == 1) {
-            destination = "Colombo to Ella";
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToEllaQueue.txt");
-        } else if (station == 2) {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueue.txt");
-            destination = "Destination - Colombo - Badulla";
-        } else if (station == 3) {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToHattonQueue.txt");
-            destination = "Destination - Badulla - Hatton";
-        } else if (station == 4) {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToEllaQueue.txt");
-            destination = "Destination - Badulla - Ella";
-        } else {
-            file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueue.txt");
-            destination = "Destination - Badulla - Colombo";
+        switch (station) {
+            case 0:
+                destination = "Colombo - Hatton";
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToHattonQueue.txt");
+                break;
+            case 1:
+                destination = "Colombo to Ella";
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToEllaQueue.txt");
+                break;
+            case 2:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\ColomboToBadullaQueue.txt");
+                destination = "Colombo - Badulla";
+                break;
+            case 3:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToHattonQueue.txt");
+                destination = "Badulla - Hatton";
+                break;
+            case 4:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToEllaQueue.txt");
+                destination = "Badulla - Ella";
+                break;
+            case 5:
+                file = new File("C:\\Users\\Nimendra Kariyawasam\\Desktop\\CW\\PP2 CW2\\v2\\src\\storeData\\BadullaToColomboQueue.txt");
+                destination = "Badulla - Colombo";
         }
         loadQueueData(file, passengerQueueOne, passengerQueueTwo);
 

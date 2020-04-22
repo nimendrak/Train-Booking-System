@@ -1,0 +1,11 @@
+Queue 1 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - nimendra kariyawasam | NIC - 981871871v | Seat #1
+Queue 1 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - kasun silva | NIC - 222222222v | Seat #3
+Queue 1 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - lewis preme | NIC - 444444444v | Seat #5
+Queue 1 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - harindu preme | NIC - 666666666v | Seat #7
+Queue 1 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - kausma preme | NIC - 888888888v | Seat #9
+
+Queue 2 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - janith pahilahe | NIC - 111111111v | Seat #2
+Queue 2 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - janith kariyawasam | NIC - 333333333v | Seat #4
+Queue 2 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - luwis preme | NIC - 555555555v | Seat #6
+Queue 2 | Destination - Colombo - Hatton | Booked date - 2020-04-23 | Passenger name - rasika preme | NIC - 777777777v | Seat #8
+
