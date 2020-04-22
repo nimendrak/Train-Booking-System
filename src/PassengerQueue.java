@@ -1,4 +1,3 @@
-import java.util.*;
 
 public class PassengerQueue {
     private final Passenger[] queueArray = new Passenger[21];
@@ -6,14 +5,15 @@ public class PassengerQueue {
     private int maxStayInQueue;
 
     int next = 0;
-    int lenCounter = 0;
 
     public boolean isEmpty() {
+        int lenCounter = 0;
         for (Passenger p : queueArray) {
             if (p != null) {
                 lenCounter++;
             }
         }
+
         boolean isEmpty = false;
         if (lenCounter == 0) {
             isEmpty = true;
@@ -22,6 +22,7 @@ public class PassengerQueue {
     }
 
     public boolean isFull() {
+        int lenCounter = 0;
         for (Passenger p : queueArray) {
             if (p != null) {
                 lenCounter++;
